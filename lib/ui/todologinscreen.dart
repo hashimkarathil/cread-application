@@ -1,13 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class Todologinscreen extends StatefulWidget {
   const Todologinscreen({super.key});
-
+  
   @override
   State<Todologinscreen> createState() => _TodologinscreenState();
 }
 
 class _TodologinscreenState extends State<Todologinscreen> {
+  TextEditingController emailController=TextEditingController();
+  TextEditingController passwordController=TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +48,7 @@ class _TodologinscreenState extends State<Todologinscreen> {
             ),
             SizedBox(height: 10,),
             TextFormField(
+              controller: emailController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(3),
@@ -70,6 +76,7 @@ class _TodologinscreenState extends State<Todologinscreen> {
             ),
             SizedBox(height: 10,),
             TextFormField(
+              controller: passwordController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(3),
@@ -94,10 +101,8 @@ class _TodologinscreenState extends State<Todologinscreen> {
               children: [
                  InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Todologinscreen()),
-                      );
+                     FirebaseFirestore.instance.collection("Users").add({"email":emailController.text,"password":passwordController.text});
+                     
                     },
                     child: Center(
                       child: Container(
@@ -118,6 +123,14 @@ class _TodologinscreenState extends State<Todologinscreen> {
                       ),
                     ),
                   ),
+
+                  ElevatedButton(
+                    onPressed: () async {
+                    final ret = await FirebaseFirestore.instance.collection("Users").get();
+                    for( var doc in ret.docs){
+                      print(doc.data());
+                    }
+                  }, child: Text("Get")),
               ],
             )
           ],
